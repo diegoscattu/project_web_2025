@@ -28,6 +28,11 @@ A user must be uniquely identified by its username, that have to be automaticall
 The code to initialize the DB and create the tables is already implemented.
 Don't forget to import the classes associated with the tables in `data/db.py`, otherwise the net tables won't be created!
 
+For the `date` attribute of the events table, you can use the datetime type:
+```python
+from datetime import datetime
+```
+
 ## APIs
 The system must provide the following APIs:
 ### /events
