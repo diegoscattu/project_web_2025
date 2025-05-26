@@ -19,11 +19,11 @@ fastapi dev
 You can also run the `main.py` file as a script.
 
 ## Database
-The system have a DB with 3 tables for storing events, users and user registrations to events.
+The system has a DB with 3 tables for storing events, users, and user registrations to events.
 The latter is already implemented.
 
-An event must be uniquely identified by its ID, that have to be automatically assigned by the system.
-A user must be uniquely identified by its username, that have to be automatically assigned by the system.
+An event must be uniquely identified by its ID, which has to be automatically assigned by the system.
+A user must be uniquely identified by their username, which will be set during the creation.
 
 The code to initialize the DB and create the tables is already implemented.
 Don't forget to import the classes associated with the tables in `data/db.py`, otherwise the net tables won't be created!
