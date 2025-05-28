@@ -11,7 +11,7 @@ if Path(__file__).parent == Path(os.getcwd()):
     config.root_dir = "."
 
 # You can add imports from here...
-
+#modifica
 from fastapi import FastAPI
 from app.routers import frontend
 from fastapi.staticfiles import StaticFiles
