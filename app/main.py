@@ -4,7 +4,7 @@ from app.config import config
 
 from pathlib import Path
 import os
-#sono ferdi
+
 # ...and here!!
 
 if Path(__file__).parent == Path(os.getcwd()):
@@ -34,7 +34,6 @@ app.mount(
     name="static"
 )
 app.include_router(frontend.router)
-
 
 if __name__ == "__main__":
     import uvicorn
