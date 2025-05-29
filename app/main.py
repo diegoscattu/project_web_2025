@@ -4,7 +4,7 @@ from app.config import config
 
 from pathlib import Path
 import os
-#sono ferdi
+
 # ...and here!!
 
 if Path(__file__).parent == Path(os.getcwd()):
@@ -13,10 +13,11 @@ if Path(__file__).parent == Path(os.getcwd()):
 # You can add imports from here...
 #modifica
 from fastapi import FastAPI
-from app.routers import frontend
+from app.routers import frontend,users,events,registrations
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from app.data.db import init_database
+
 
 
 @asynccontextmanager
@@ -33,8 +34,10 @@ app.mount(
     StaticFiles(directory=config.root_dir / "static"),
     name="static"
 )
+app.include_router(registrations.router)
+app.include_router(events.router)
+app.include_router(users.router)
 app.include_router(frontend.router)
-
 
 if __name__ == "__main__":
     import uvicorn
