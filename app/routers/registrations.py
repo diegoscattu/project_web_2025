@@ -10,24 +10,8 @@ router = APIRouter(prefix="/registrations")
 
 
 @router.get("/")
-def get_all_registrations(session: SessionDep) -> list[Registration]:
-    statement = select(Registration)
-    event = session.exec(statement).all()
-    return event
+def list_all_registrations(session: SessionDep) -> list[Registration]:
+    registrations = session.exec(select(Registration)).all()
+    return registrations
 
 
-@router.post("/{id}/register", response_model=User)
-def register_user_to_event(
-    id: Annotated[int, Path(description="ID of the event")],
-    user: User,
-    session: SessionDep
-) -> User:
-    event = session.get(Event, id)
-    if event is None:
-        raise HTTPException(status_code=404, detail="Event not found")
-
-    new_user = User(**user.dict(), event_id=id)
-    session.add(new_user)
-    session.commit()
-    session.refresh(new_user)
-    return new_user

@@ -3,6 +3,8 @@ from app.data.db import SessionDep
 from typing import Annotated
 from sqlmodel import select, delete
 from app.models.event import Event, EventCreate
+from app.models.user import User
+from app.models.registration import Registration, RegistrationCreate
 
 
 router = APIRouter(prefix="/events")
@@ -68,3 +70,34 @@ def update_event(
     session.add(event)
     session.commit()
     return "event successfully update"
+
+
+@router.post("/{id}/register")
+def register_user_to_event(
+    id: Annotated[int, Path(description="ID of the event")],
+    registration: RegistrationCreate,
+    session: SessionDep
+):
+    event = session.get(Event, id)
+    if event is None:
+        raise HTTPException(status_code=404, detail="Event not found")
+
+    # Verifica utente esistente
+    user = session.get(User, registration.username)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Verifica registrazione duplicata
+    existing = session.exec(
+        select(Registration).where(
+            (Registration.event_id == id) & (Registration.username == registration.username)
+        )
+    ).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="User already registered")
+
+    new_registration = Registration(username=registration.username, event_id=id)
+    session.add(new_registration)
+    session.commit()
+    session.refresh(new_registration)
+    return new_registration
