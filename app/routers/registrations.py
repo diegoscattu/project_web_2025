@@ -15,3 +15,22 @@ def list_all_registrations(session: SessionDep) -> list[Registration]:
     return registrations
 
 
+@router.delete("/")
+def delete_registration(session: SessionDep,
+    username: str = select(Registration.username),
+    event_id: int = select(Event.id)
+
+):
+    registration = session.exec(
+        select(Registration).where(
+            (Registration.username == username) & (Registration.event_id == event_id)
+        )
+    ).first()
+
+    if not registration:
+        raise HTTPException(status_code=404, detail="Registration not found")
+
+    session.delete(registration)
+    session.commit()
+    return {"message": f"Registration for user {username} on event {event_id} deleted"}
+
