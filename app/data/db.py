@@ -8,6 +8,7 @@ from app.config import config
 from app.models.registration import Registration  # NOQA
 from app.models.event import Event
 from app.models.user import User
+from app.models.event import Event
 
 
 sqlite_file_name = config.root_dir / "data/database.db"
@@ -24,7 +25,7 @@ def init_database() -> None:
         with Session(engine) as session:
             # TODO: (optional) initialize the database with fake data
             for i in range(10):
-                user= User(
+                user = User(
                     username=f.user_name(),
                     name=f.name(),
                     email=f.email()
@@ -39,5 +40,3 @@ def get_session():
 
 
 SessionDep = Annotated[Session, Depends(get_session)]
-
-
