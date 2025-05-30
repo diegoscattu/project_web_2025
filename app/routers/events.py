@@ -47,7 +47,8 @@ def delete_event(
 
 @router.get("/{id}")
 def get_event_by_id(session: SessionDep,
-                    id: Annotated[int, Path(description="the id of the event to delete")]) -> Event:
+                    id: Annotated[int,
+                    Path(description="the id of the event to delete")]) -> Event:
     event = session.get(Event, id)
     if event is None:
         raise HTTPException(status_code=404, detail="Event not found")
@@ -99,5 +100,4 @@ def register_user_to_event(
     new_registration = Registration(username=registration.username, event_id=id)
     session.add(new_registration)
     session.commit()
-    session.refresh(new_registration)
     return new_registration
