@@ -3,6 +3,7 @@ from app.data.db import SessionDep
 from typing import Annotated
 from sqlmodel import select, delete
 from app.models.user import User
+from app.models.registration import Registration
 
 router = APIRouter(prefix="/users")
 
@@ -37,6 +38,12 @@ def delete_user(
     user = session.get(User, username)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
+    # elimina tutte le registrazioni dell'utente
+    registration = session.exec(
+        select(Registration).where(Registration.username == username)).all()
+    for reg in registration:
+        session.delete(reg)
+    #elimina l'utente
     session.delete(user)
     session.commit()
     return "User successfully deleted"
