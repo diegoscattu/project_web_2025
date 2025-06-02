@@ -2,6 +2,7 @@ from sqlmodel import create_engine, SQLModel, Session
 from typing import Annotated
 from fastapi import Depends
 import os
+import random
 from faker import Faker
 from app.config import config
 # TODO: remember to import all the DB models here
@@ -23,6 +24,8 @@ def init_database() -> None:
         f = Faker("it_IT")
         with Session(engine) as session:
             # TODO: (optional) initialize the database with fake data
+            users = []
+            events = []
             for i in range(3):
                 user = User(
                     username=f.user_name(),
@@ -30,6 +33,7 @@ def init_database() -> None:
                     email=f.email()
                 )
                 session.add(user)
+                users.append(user)
             session.commit()
             for i in range(3):
                 event = Event(title=f.word(),
@@ -37,10 +41,11 @@ def init_database() -> None:
                               date=f.date_time(),
                               location=f.city())
                 session.add(event)
+                events.append(event)
             session.commit()
-            for i in range(2):
-                link = Registration(username=f.pyint(1, 10),
-                                    event_id=f.pyint(1, 10))
+            for i in range(1):
+                link = Registration(username=random.choice(users).username,
+                                    event_id=random.choice(events).id)
                 session.add(link)
             session.commit()
 
