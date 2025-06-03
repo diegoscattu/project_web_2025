@@ -100,4 +100,4 @@ def register_user_to_event(
     new_registration = Registration(username=registration.username, event_id=id)
     session.add(new_registration)
     session.commit()
-    return new_registration
+    return f"utente:{user.username} registrato con successo all'evento:{event.id}"
