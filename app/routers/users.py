@@ -9,6 +9,7 @@ router = APIRouter(prefix="/users")
 
 
 @router.get("/")
+#restituisce la lista di tutti gli utenti
 def get_all_users(session: SessionDep) -> list[User]:
     statement = select(User)
     users = session.exec(statement).all()
@@ -16,6 +17,7 @@ def get_all_users(session: SessionDep) -> list[User]:
 
 
 @router.post("/")
+#aggiungiamo un utente
 def create_user(user: User, session: SessionDep):
     new_user = User(**user.dict())
     session.add(new_user)
@@ -24,6 +26,7 @@ def create_user(user: User, session: SessionDep):
 
 
 @router.delete("/")
+#eliminiamo tutti gli utenti
 def delete_all_users(session: SessionDep):
     statement = delete(User)
     session.exec(statement)
@@ -32,6 +35,7 @@ def delete_all_users(session: SessionDep):
 
 
 @router.delete("/{username}")
+#eliminiamo un determinato utente e le sue registrazioni
 def delete_user(
         session: SessionDep,
         username: Annotated[str, Path(description="the username of the user to delete")]):
@@ -50,6 +54,7 @@ def delete_user(
 
 
 @router.get("/{username}")
+#restituisce i dati di un utente dato un determinato username
 def get_user_by_username(session: SessionDep,
                          username: Annotated[str, Path(description="the username of the user to delete")]) -> User:
     user = session.get(User, username)
