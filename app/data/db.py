@@ -26,6 +26,7 @@ def init_database() -> None:
             # TODO: (optional) initialize the database with fake data
             users = []
             events = []
+            # Creo 3 utenti casuali
             for i in range(3):
                 user = User(
                     username=f.user_name(),
@@ -35,6 +36,7 @@ def init_database() -> None:
                 session.add(user)
                 users.append(user)
             session.commit()
+            # Creo 3 eventi casuali
             for i in range(3):
                 event = Event(title=f.word(),
                               description=f.text(),
@@ -43,6 +45,7 @@ def init_database() -> None:
                 session.add(event)
                 events.append(event)
             session.commit()
+            # Registro casualmente un utente a un evento
             for i in range(1):
                 link = Registration(username=random.choice(users).username,
                                     event_id=random.choice(events).id)
