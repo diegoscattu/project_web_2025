@@ -12,6 +12,7 @@ router = APIRouter(prefix="/events")
 
 @router.get("/")
 def get_all_events(session: SessionDep) -> list[Event]:
+    """Returns the list of all events"""
     statement = select(Event)
     event = session.exec(statement).all()
     return event
@@ -19,6 +20,7 @@ def get_all_events(session: SessionDep) -> list[Event]:
 
 @router.post("/")
 def create_event(event: EventCreate, session: SessionDep):
+    """Creates a new event"""
     new_event = Event(**event.dict())
     session.add(new_event)
     session.commit()
@@ -27,6 +29,7 @@ def create_event(event: EventCreate, session: SessionDep):
 
 @router.delete("/")
 def delete_all_events(session: SessionDep):
+    """Deletes all events"""
     statement = delete(Event)
     session.exec(statement)
     session.commit()
@@ -37,6 +40,7 @@ def delete_all_events(session: SessionDep):
 def delete_event(
         session: SessionDep,
         id: Annotated[int, Path(description="the id of the event to delete")]):
+    """Deletes the event with the given ID"""
     event = session.get(Event, id)
     if event is None:
         raise HTTPException(status_code=404, detail="Event not found")
@@ -49,6 +53,7 @@ def delete_event(
 def get_event_by_id(session: SessionDep,
                     id: Annotated[int,
                     Path(description="the id of the event to delete")]) -> Event:
+    """Returns an event with the given ID"""
     event = session.get(Event, id)
     if event is None:
         raise HTTPException(status_code=404, detail="Event not found")
@@ -61,6 +66,7 @@ def update_event(
         id: Annotated[int, Path(description="the id of the event to update")],
         new_event: EventCreate
 ):
+    """Updates the event with the given ID"""
     event = session.get(Event, id)
     if event is None:
         raise HTTPException(status_code=404, detail="Event not found")
@@ -79,16 +85,15 @@ def register_user_to_event(
     registration: RegistrationCreate,
     session: SessionDep
 ):
+    """Registers a new user to the event with the given ID"""
     event = session.get(Event, id)
     if event is None:
         raise HTTPException(status_code=404, detail="Event not found")
 
-    # Verifica utente esistente
     user = session.get(User, registration.username)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Verifica registrazione duplicata
     existing = session.exec(
         select(Registration).where(
             (Registration.event_id == id) & (Registration.username == registration.username)

@@ -9,16 +9,16 @@ router = APIRouter(prefix="/users")
 
 
 @router.get("/")
-#restituisce la lista di tutti gli utenti
 def get_all_users(session: SessionDep) -> list[User]:
+    """Returns the list of all users"""
     statement = select(User)
     users = session.exec(statement).all()
     return users
 
 
 @router.post("/")
-#aggiungiamo un utente
 def create_user(user: User, session: SessionDep):
+    """Create a new user"""
     new_user = User(**user.dict())
     session.add(new_user)
     session.commit()
@@ -26,8 +26,8 @@ def create_user(user: User, session: SessionDep):
 
 
 @router.delete("/")
-#eliminiamo tutti gli utenti
 def delete_all_users(session: SessionDep):
+    """Delete all users"""
     statement = delete(User)
     session.exec(statement)
     session.commit()
@@ -35,28 +35,26 @@ def delete_all_users(session: SessionDep):
 
 
 @router.delete("/{username}")
-#eliminiamo un determinato utente e le sue registrazioni
 def delete_user(
         session: SessionDep,
         username: Annotated[str, Path(description="the username of the user to delete")]):
+    """Delete a user and his registrations"""
     user = session.get(User, username)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    # elimina tutte le registrazioni dell'utente
     registration = session.exec(
         select(Registration).where(Registration.username == username)).all()
     for reg in registration:
         session.delete(reg)
-    #elimina l'utente
     session.delete(user)
     session.commit()
     return "User successfully deleted"
 
 
 @router.get("/{username}")
-#restituisce i dati di un utente dato un determinato username
 def get_user_by_username(session: SessionDep,
                          username: Annotated[str, Path(description="the username of the user to delete")]) -> User:
+    """Returns a user with the given username"""
     user = session.get(User, username)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")

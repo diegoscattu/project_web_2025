@@ -10,6 +10,7 @@ router = APIRouter(prefix="/registrations")
 
 @router.get("/")
 def list_all_registrations(session: SessionDep) -> list[Registration]:
+    """Returns the list of all registrations"""
     registrations = session.exec(select(Registration)).all()
     return registrations
 
@@ -18,6 +19,7 @@ def list_all_registrations(session: SessionDep) -> list[Registration]:
 def delete_registration(session: SessionDep,
                         username: str = select(Registration.username),
                         event_id: int = select(Event.id)):
+    """Deletes the registration with the given username and event ID"""
     registration = session.exec(
         select(Registration).where(
             (Registration.username == username) & (Registration.event_id == event_id)
