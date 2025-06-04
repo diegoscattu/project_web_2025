@@ -2,7 +2,7 @@ from fastapi import APIRouter, Path, HTTPException
 from app.data.db import SessionDep
 from typing import Annotated
 from sqlmodel import select, delete
-from app.models.user import User
+from app.models.user import User, UserCreate
 from app.models.registration import Registration
 
 router = APIRouter(prefix="/users")
@@ -17,8 +17,12 @@ def get_all_users(session: SessionDep) -> list[User]:
 
 
 @router.post("/")
-def create_user(user: User, session: SessionDep):
+def create_user(user: UserCreate, session: SessionDep):
     """Create a new user"""
+    existing_user = session.get(User, user.username)
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Username already exists")
+
     new_user = User(**user.dict())
     session.add(new_user)
     session.commit()
