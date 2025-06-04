@@ -31,9 +31,13 @@ def create_user(user: UserCreate, session: SessionDep):
 
 @router.delete("/")
 def delete_all_users(session: SessionDep):
-    """Delete all users"""
-    statement = delete(User)
-    session.exec(statement)
+    """Delete all users and all their registrations"""
+    for user in session.exec(select(User)):
+        registration = session.exec(
+            select(Registration).where(Registration.username == user.username)).all()
+        for reg in registration:
+            session.delete(reg)
+        session.delete(user)
     session.commit()
     return "All Users successfully deleted"
 
