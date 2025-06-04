@@ -11,6 +11,7 @@ router = APIRouter(prefix="/users")
 @router.get("/")
 def get_all_users(session: SessionDep) -> list[User]:
     """Returns the list of all users"""
+    # Restituisco la lista di tutti gli utenti
     statement = select(User)
     users = session.exec(statement).all()
     return users
@@ -20,10 +21,12 @@ def get_all_users(session: SessionDep) -> list[User]:
 def create_user(user: UserCreate, session: SessionDep):
     """Create a new user"""
     existing_user = session.get(User, user.username)
+    # Controllo se l'username non è già presente
     if existing_user:
         raise HTTPException(status_code=400, detail="Username already exists")
-
+    # Passo i parametri in ingresso alla funzione
     new_user = User(**user.dict())
+    # Creo il nuovo utente
     session.add(new_user)
     session.commit()
     return {"messagge": f"User {new_user.username} created successfully"}
